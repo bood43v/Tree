@@ -2,6 +2,7 @@
 /// @author Будаев Г.Б.
 #include <iostream>
 #include "TreeNode.h"
+#include "BSTNode.h"
 
 using namespace std;
 
@@ -43,7 +44,15 @@ int main()
     E->PrintNodeData();
 
 
+    BSTNode<int>* b1 = new BSTNode<int>(10);
+    b1->InsertNode(20);
+    b1->InsertNode(5);
+    b1->InsertNode(23);
 
+    bool result = b1->Search(110);
+    if (result) cout << "found" << endl;
+    else cout << "not found" << endl;
 
+    b1->Print_tree();
     return 0;
 }
