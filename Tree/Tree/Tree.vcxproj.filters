@@ -23,7 +23,7 @@
     <ClInclude Include="TreeNode.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="BSTNode.h">
+    <ClInclude Include="BSTree.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

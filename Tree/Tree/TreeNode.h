@@ -29,6 +29,9 @@ public:
     /// Деструктор
     ~TreeNode(){}
 
+    void Copy(TreeNode<T>* node_) {
+        this = node_;
+    }
     /// Установить левого потомка
     void SetLeft(TreeNode<T>* node_)
     {

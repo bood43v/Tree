@@ -60,7 +60,21 @@ public:
     }
 
 
-   
+    int AddToArray(BSTNode* node, T arr[], int i)
+    {
+        if (node == NULL)
+            return i;
+
+        arr[i] = node->data;
+        i++;
+        if (node->left != NULL)
+            i = AddToArray(node->left, arr, i);
+        if (node->right != NULL)
+            i = AddToArray(node->right, arr, i);
+
+        return i;
+    }
+
     void Print_tree()
     {
         BSTNode* curr = this;
@@ -72,7 +86,7 @@ public:
         }
     }
 
-    template<class T>
+    
     bool Search(T key)
     {
         BSTNode* curr = this;
@@ -85,6 +99,7 @@ public:
         }
         return curr != NULL;
     }
+
 
 };
 
