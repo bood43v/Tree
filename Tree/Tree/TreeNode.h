@@ -29,9 +29,11 @@ public:
     /// Деструктор
     ~TreeNode(){}
 
+    /// рекурсивно копировать узлы( на обходе )
     void Copy(TreeNode<T>* node_) {
         this = node_;
     }
+
     /// Установить левого потомка
     void SetLeft(TreeNode<T>* node_)
     {

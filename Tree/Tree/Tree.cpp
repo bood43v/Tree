@@ -57,8 +57,14 @@ int main()
     Aa->Insert(45);
     // поиск по дереву
     int x = 30;
-    if (Aa->Find(x) == false) cout << x << " isn't in tree";
+    if (Aa->Find(Aa->GetRoot(), x) == nullptr) cout << x << " isn't in tree";
     else cout << x << " is in tree";
+
+    x = 15;
+    if (Aa->Find(Aa->GetRoot(), x) == nullptr) cout << endl << x << " isn't in tree";
+    else cout << endl << x << " is in tree";
+
+    cout << endl << (Aa->FindMin(Aa->GetRoot()))->GetData() << " is minimum";
 
     // массив
     int *arr = new int[Aa->GetSize()];
@@ -74,12 +80,12 @@ int main()
 
 
 
-    int y = 30;
-    Aa->Delete(y);
+    int y = -15;
+    //Aa->Delete(y);
 
     cout << Aa->GetSize();
 
-    cout << endl << (Aa->Successor(y))->GetData();
+    cout << endl << (Aa->Successor(Aa->GetRoot(), y))->GetData();
     // 
     //int key = 110;
     //bool result = b1->Search(key);

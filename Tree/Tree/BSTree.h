@@ -15,34 +15,6 @@ private:
     TreeNode<T>* curr;/// текущий узел
     int size; /// размер дерева (кол-во узлов)
 
-    /// скрытый метод поиска узла в дереве, используемый функцией Find для вывода, присутствует ли элемент в дереве
-    template <class T>
-    TreeNode<T>* FindNode(const T& item, TreeNode<T>*& parent) const
-    {
-        // пробежать по узлам дерева, начиная с корня
-        TreeNode<T>* t = root;
-        //у корня нет родителя
-        parent = nullptr;
-        // прерваться на пустом дереве
-        while (t != nullptr)
-        {
-            // остановиться по совпадении
-            if (item == t->GetData())
-                break;
-            else
-            {
-                // обновить родительский указатель и идти направо или налево
-                parent = t;
-                if (item < t->GetData())
-                    t = t->GetLeft();
-                else
-                    t = t->GetRight();
-            }
-        }
-        // возвратить указатель на узел; NULL, если не найден
-        return t;
-    }
-
 public:
     /// <summary>
     /// конструктор без параметров
@@ -109,109 +81,13 @@ public:
         size++;
     }
 
-    //// создать объект TreeNode с указательными полями lptr и rptr.
-    //// по умолчанию указатели nullptr
-    //template <class T>
-    //TreeNode<T>* GetTreeNode(T item, TreeNode<T>* lptr = nullptr,
-    //    TreeNode<T>* rptr = nullptr)
-    //{
-    //    TreeNode<T>* p;
-    //    // вызвать new для создания нового узла
-    //    // передать туда параметры lptr и rptr
-    //    p = new TreeNode<T>(item, lptr, rptr);
-    //    // если памяти недостаточно, завершить программу сообщением об ошибке
-    //    if (p == nullptr)
-    //    {
-    //        exit(1);
-    //    }
-    //    // вернуть указатель на выделенную системой память
-    //    return p;
-    //}
-
-    //// создать дубликат дерева t и возвратить корень нового дерева
-    //template <class T>
-    //TreeNode<T>* CopyTree(TreeNode<T>* t)
-    //{
-    //    // переменная newnode указывает на новый узел, создаваемый
-    //    // посредством вызова GetTreeNode и присоединяемый в дальнейшем
-    //    // к новому дереву, указатели newlptr и newrptr адресуют сыновей
-    //    // нового узла и передаются в качестве параметров в GetTreeNode
-    //    TreeNode<T>* newlptr, * newrptr, * newnode;
-    //    // остановить рекурсивное прохождение при достижении пустого дерева
-    //    if (t == nullptr)
-    //        return nullptr;
-    //    // CopyTree строит новое дерево в процессе прохождения узлов дерева t. в каждом
-    //    // узле этого дерева функция CopyTree проверяет наличие левого сына, если он
-    //    // есть, создается его копия, в противном случае возвращается NULL. CopyTree
-    //    // создает копию узла с помощью GetTreeNode и подвешивает к нему копии сыновей.
-    //    if (t->GetLeft() != nullptr)
-    //        newlptr = this->CopyTree(t->GetLeft());
-    //    else
-    //        newlptr - nullptr;
-    //    if (t->GetRight() != nullptr)
-    //        newrptr = this->CopyTree(t->GetRight());
-    //    else
-    //        newrptr = nullptr;
-    //    // построить новое дерево снизу вверх, сначала создавая
-    //    // двух сыновей, а затем их родителя
-    //    newnode = this->GetTreeNode(t->GetData(), newlptr, newrptr);
-    //    // вернуть указатель на вновь созданное дерево
-    //    return newnode;
-    //}
-
-    //// оператор присваивания
-    //BSTree<T>& operator =(const BSTree<T>& x)
-    //{
-    //    // если копирование дерева в само себя
-    //    if (this == &x)
-    //        return *this;
-    //    // очистить текущее дерево, скопировать новое дерево в текущий объект
-    //    ClearTree();
-    //    root = this->CopyTree(this->GetRoot());
-    //    // присвоить текущему указателю значение корня и задать размер дерева
-    //    curr = this->GetRoot();
-    //    size = this->GetSize();
-    //    // возвратить ссылку на текущий объект
-    //    return *this;
-    //}
-
-    /// <summary>
-    /// удаление дерева
-    /// </summary>
-    /// <param name="current"></param>
-    //void ClearTree()
-    //{
-    //    DeleteTree(root);
-    //    root = nullptr;
-    //}
-
-
-    //// освободить динамическую память, занимаемую данным узлом
-    //template <class t>
-    //void FreeTreeNode(TreeNode<T>* p)
-    //{
-    //    delete p;
-    //}
-
-    //// обратный алгоритм для прохождения узлов дерева
-    //// и удаление каждого узла при его посещении
-    //template <class T>
-    //void DeleteTree(TreeNode<T> *t)
-    //{
-    //    if (this->GetRoot() != nullptr)
-    //    {
-    //        this->DeleteTree(t->GetLeft());
-    //        this->DeleteTree(t->GetRight());
-    //        delete t;
-    //    }
-    //}
 
     /// Вставка узла
     void Insert(const T& key)
     {
         T key_ = key;
         /// если такого узла нет
-        if (this->Find(key_) == false)
+        if (this->Find(root, key_) == nullptr)
         {
             // t — текущий узел, parent — предыдущий узел
             TreeNode<T>* t = root, * parent = nullptr, * newNode;
@@ -239,28 +115,51 @@ public:
                 parent->SetRight(newNode);
             // присвоить указателю current адрес нового узла и увеличить size на единицу
             this->SetCurr(newNode);
-            this->IncSize();
+            size++;
         }
     }
 
 
 
-    /// Поиск по дереву
-    bool Find(T& key)
+
+    /// Поиск элемента в дереве
+    template <class T>
+    TreeNode<T>* Find(TreeNode<T>* root_, T key) {
+        if (root_ == nullptr) return nullptr;
+        else if (root_->GetData() == key) return root_;
+        else if (root_->GetData() < key) return Find(root_->GetRight(), key);
+        else return Find(root_->GetLeft(), key);
+    }
+
+    TreeNode<T>* FindMin(TreeNode<T>* root_) {
+        if (root_ == nullptr) return nullptr;
+        while (root_->GetLeft() != nullptr)
+            root_ = root_->GetLeft();
+        return root_;
+    }
+
+    // если элемент находится на дереве, удалить его
+    template <class T>
+    TreeNode<T>* Successor(TreeNode<T>* root_, T key)
     {
-        //мы используем FindNode, который принимает параметр parent
-        TreeNode<T>* parent = nullptr;
-        // искать item, назначить совпавший узел текущим
-        this->SetCurr(this->FindNode(key, parent));
-        // если найден, присвоить данные узла и возвратить 1
-        if (this->GetCurr() != nullptr)
-        {
-            key = this->GetCurr()->GetData();
-            return true;// item найден, возвратить 1
+        TreeNode<T>* current = this->Find(root_, key);
+        if (current == nullptr) return nullptr;
+        if (current->GetRight() != nullptr) {  
+            return FindMin(current->GetRight()); 
         }
-        else
-            // item не найден, возвратить 0
-        return false;
+        else {   
+            TreeNode<T>* successor = nullptr;
+            TreeNode<T>* ancestor = root_;
+            while (ancestor != current) {
+                if (current->GetData() < ancestor->GetData()) {
+                    successor = ancestor; 
+                    ancestor = ancestor->GetLeft();
+                }
+                else
+                    ancestor = ancestor->GetRight();
+            }
+            return successor;
+        }
     }
 
     /// добавление узлов в массив
@@ -280,25 +179,17 @@ public:
 
     // если элемент находится на дереве, удалить его
     template <class T>
-    void Delete(T& item)
+    void DeleteNode(TreeNode<T>* root_,T data)
     {
-        //TreeNode<T>* parent, *deleted, *replaced;
-        //if (deleted->Copy(FindNode(item, parent) == false))
-        //    return;
-        //
-        //if((this->FindNode(item, parent))->GetLeft() == nullptr)
+        TreeNode<T>* current;
+        if (root_ == nullptr) return;
+        
+        if ((this->Find(root_, data))->GetLeft() == nullptr && (this->Find(root_, data)) == nullptr)
+
+            return;
+
     }
 
-    // если элемент находится на дереве, удалить его
-    template <class T>
-    TreeNode<T>* Successor(T& item)
-    {
-        // если такого элемента нет
-        if (this->Find(item) == false) return nullptr;
-
-        if ((this->FindNode(item, root))->GetRight() != nullptr)
-            return (this->FindNode(item, root))->GetRight();
-    }
 
     //void print_tree(TreeNode*);
     //void delete_tree(TreeNode*);
