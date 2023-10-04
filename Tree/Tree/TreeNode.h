@@ -12,6 +12,10 @@ private:
     TreeNode<T>* right;     /// Правый потомок
 
 public:
+
+    // конструктор с 3 параметрами ( данные и указатели на левый и на правый )
+
+
     /// Конструктор без параметров
     TreeNode(T data_){
         data = data_; 
@@ -124,6 +128,7 @@ public:
         node_->GetRight()->PrintTreeLRN();
         node_->PrintNodeData();
     }
+
 
 };
 

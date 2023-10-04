@@ -12,8 +12,12 @@ class BSTree
 {
 private:
     TreeNode<T>* root;/// корень
-    TreeNode<T>* curr;/// текущий узел
+    TreeNode<T>* curr = root;/// текущий узел
     int size; /// размер дерева (кол-во узлов)
+
+    void IncSize() {
+        size++;
+    }
 
 public:
     /// <summary>
@@ -35,6 +39,7 @@ public:
 
     /// деструктор
     ~BSTree() {};
+    //Удаление узлов
 
     /// <summary>
     /// вернуть корень
@@ -77,17 +82,12 @@ public:
         return size;
     }
 
-    void IncSize() {
-        size++;
-    }
-
-
     /// Вставка узла
     void Insert(const T& key)
     {
         T key_ = key;
         /// если такого узла нет
-        if (this->Find(root, key_) == nullptr)
+        if (this->Find(key_) == nullptr)
         {
             // t — текущий узел, parent — предыдущий узел
             TreeNode<T>* t = root, * parent = nullptr, * newNode;
@@ -119,39 +119,45 @@ public:
         }
     }
 
-
-
-
     /// Поиск элемента в дереве
     template <class T>
-    TreeNode<T>* Find(TreeNode<T>* root_, T key) {
-        if (root_ == nullptr) return nullptr;
-        else if (root_->GetData() == key) return root_;
-        else if (root_->GetData() < key) return Find(root_->GetRight(), key);
-        else return Find(root_->GetLeft(), key);
+    TreeNode<T>* Find(T key) {
+        if (curr == nullptr) return nullptr;
+        else if (curr->GetData() == key) return root;
+        else if (curr->GetData() < key) {
+            curr = root->GetRight();
+            return Find(key);
+        }
+        else {
+            curr->GetLeft();
+            return Find(key);
+        }
     }
 
-    TreeNode<T>* FindMin(TreeNode<T>* root_) {
-        if (root_ == nullptr) return nullptr;
-        while (root_->GetLeft() != nullptr)
-            root_ = root_->GetLeft();
-        return root_;
-    }
+    /// Поиск минимального в ветке (или дереве)
 
-    // если элемент находится на дереве, удалить его
-    template <class T>
-    TreeNode<T>* Successor(TreeNode<T>* root_, T key)
-    {
-        TreeNode<T>* current = this->Find(root_, key);
+    TreeNode<T>* FindMin() {
+        TreeNode<T>* current = root;
         if (current == nullptr) return nullptr;
-        if (current->GetRight() != nullptr) {  
-            return FindMin(current->GetRight()); 
+        while (current->GetLeft() != nullptr)
+            current = current->GetLeft();
+        return current;
+    }
+
+    /// следующий наибольший
+    template <class T>
+    TreeNode<T>* Successor( T key)
+    {
+        curr = this->Find(key);
+        if (curr == nullptr) return nullptr;
+        if (curr->GetRight() != nullptr) {  
+            return FindMin(); 
         }
         else {   
             TreeNode<T>* successor = nullptr;
-            TreeNode<T>* ancestor = root_;
-            while (ancestor != current) {
-                if (current->GetData() < ancestor->GetData()) {
+            TreeNode<T>* ancestor = root;
+            while (ancestor != curr) {
+                if (curr->GetData() < ancestor->GetData()) {
                     successor = ancestor; 
                     ancestor = ancestor->GetLeft();
                 }
@@ -163,32 +169,119 @@ public:
     }
 
     /// добавление узлов в массив
-    int AddToArrayLNR(TreeNode<T>* root_, T arr[], int i)
+    int AddToArrayLNR(T arr[], int i)
     {
-        if (root_ == nullptr)
+        if (curr == nullptr)
             return i;
-        if (root_->GetLeft() != nullptr)
-            i = AddToArrayLNR(root_->GetLeft(), arr, i);
-        arr[i] = root_->GetData();
+        if (curr->GetLeft() != nullptr)
+            i = AddToArrayLNR(arr, i);
+        arr[i] = curr->GetData();
             i++;
-        if (root_->GetRight() != nullptr)
-            i = AddToArrayLNR(root_->GetRight(), arr, i);
+        if (curr->GetRight() != nullptr)
+            i = AddToArrayLNR(arr, i);
         return i;
     }
 
-
-    // если элемент находится на дереве, удалить его
-    template <class T>
-    void DeleteNode(TreeNode<T>* root_,T data)
+    // Рекурсивная функция для вычисления высоты заданного бинарного дерева
+    int Height(TreeNode<T>* root)
     {
-        TreeNode<T>* current;
-        if (root_ == nullptr) return;
+        // базовый случай: пустое дерево имеет высоту 0
+        if (root == nullptr) {
+            return 0;
+        }
+
+        // повторяем для левого и правого поддерева и учитываем максимальную глубину
         
-        if ((this->Find(root_, data))->GetLeft() == nullptr && (this->Find(root_, data)) == nullptr)
-
-            return;
-
+        return 1 + max( Height(root->GetLeft()), Height(root->GetRight()) );
     }
+
+    /// если элемент находится на дереве, удалить его
+    template <class T>
+    void DeleteNode(T key)
+    {
+        TreeNode<T> *parent;
+        // если дерево пустое
+        if (root == nullptr) return;
+       
+        // поиск ключа
+        curr = this->Find(key);
+
+        // возвращаем, если ключ не найден в дереве
+        if (curr == nullptr) {
+            return;
+        }
+        TreeNode<T>* parent = this->FindParent(this->GetRoot(), key);
+        // удаляемый узел не имеет дочерних элементов
+        if (curr->GetLeft() == nullptr && curr->GetRight() == nullptr)
+        {
+
+            // если удаляемый узел не является корневым узлом, то устанавливаем его
+            // родительский левый/правый дочерний элемент в null
+            if (curr != root)
+            {
+
+                if (parent->GetLeft() == curr) {
+                    parent->GetLeft() = nullptr;
+                }
+                else {
+                    parent->GetRight() = nullptr;
+                }
+            }
+            // если дерево имеет только корневой узел, устанавливаем его в null
+            else {
+                root = nullptr;
+            }
+
+            // освобождаем память
+            delete curr;   
+        }
+
+        // удаляемый узел имеет двух потомков
+        else if (curr->GetLeft() && curr->GetRight())
+        {
+            // найти его неупорядоченный узел-преемник
+            TreeNode<T>* successor = this->Successor(curr->GetRight());
+
+            // сохраняем последующее значение
+            T val = successor->GetData();
+
+            // рекурсивно удаляем преемника. Обратите внимание, что преемник
+            // будет иметь не более одного потомка (правого потомка)
+            this->DeleteNode(successor->GetData());
+
+            // копируем значение преемника в текущий узел
+            curr->data = val;
+        }
+
+        // Случай 3: удаляемый узел имеет только одного потомка
+        else {
+            // выбираем дочерний узел
+            TreeNode<T>* child = (curr->GetLeft()) ? curr->GetLeft() : curr->GetRight();
+
+            // если удаляемый узел не является корневым узлом, устанавливаем его родителя
+            // своему потомку
+            if (curr != root)
+            {
+                if (curr == parent->GetLeft()) {
+                    parent->left = child;
+                }
+                else {
+                    parent->right = child;
+                }
+            }
+
+            // если удаляемый узел является корневым узлом, то установить корень дочернему
+            else {
+                this->SetRoot(child);
+            }
+
+            // освобождаем память
+            delete curr;
+        }
+    }
+
+
+    
 
 
     //void print_tree(TreeNode*);

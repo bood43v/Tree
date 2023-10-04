@@ -9,7 +9,7 @@ namespace TreeTest
     TEST_CLASS(UnitTest1)
     {
     public:
-        void Generate(BSTree <int>* & tr1, BSTree <int>*& tr2, BSTree <int>*& tr3, BSTree <int>*& tr4, BSTree <int>*& tr5, BSTree <int>*& tr6) {
+        void Generate(BSTree <int>* tr1, BSTree <int>* tr2, BSTree <int>* tr3, BSTree <int>* tr4, BSTree <int>* tr5, BSTree <int>* tr6) {
             
             tr1->Insert(5);/// вырожденное 5    
             tr1->Insert(10);///               10
@@ -53,27 +53,27 @@ namespace TreeTest
             Generate(t1, t2, t3, t4, t5, t6);
 
             int* arr1 = new int[t1->GetSize()];
-            t1->AddToArrayLNR(t1->GetRoot(), arr1, 0);
+            t1->AddToArrayLNR(arr1, 0);
             Assert::IsTrue(t1->GetSize() == 5);
 
             int* arr2 = new int[t2->GetSize()];
-            t2->AddToArrayLNR(t2->GetRoot(), arr2, 0);
+            t2->AddToArrayLNR(arr2, 0);
             Assert::IsTrue(t2->GetSize() == 1);
 
             int* arr3 = new int[t3->GetSize()];
-            t3->AddToArrayLNR(t3->GetRoot(), arr3, 0);
+            t3->AddToArrayLNR(arr3, 0);
             Assert::IsTrue(t3->GetSize() == 0);
 
             int* arr4 = new int[t4->GetSize()];
-            t4->AddToArrayLNR(t4->GetRoot(), arr4, 0);
+            t4->AddToArrayLNR(arr4, 0);
             Assert::IsTrue(t4->GetSize() == 6);
 
             int* arr5 = new int[t5->GetSize()];
-            t5->AddToArrayLNR(t5->GetRoot(), arr5, 0);
+            t5->AddToArrayLNR(arr5, 0);
             Assert::IsTrue(t5->GetSize() == 5);
 
             int* arr6 = new int[t6->GetSize()];
-            t6->AddToArrayLNR(t6->GetRoot(), arr6, 0);
+            t6->AddToArrayLNR(arr6, 0);
             Assert::IsTrue(t6->GetSize() == 2);
         }
 
@@ -92,19 +92,19 @@ namespace TreeTest
             Generate(t1, t2, t3, t4, t5, t6);
 
             int* arr1 = new int[t1->GetSize()];
-            t1->AddToArrayLNR(t1->GetRoot(), arr1, 0);
+            t1->AddToArrayLNR(arr1, 0);
             Assert::IsTrue(arr1[0] == 5);
             Assert::IsTrue(arr1[2] == 20);
             Assert::IsTrue(arr1[4] == 40);
 
             int* arr2 = new int[t2->GetSize()];
-            t2->AddToArrayLNR(t2->GetRoot(), arr2, 0);
+            t2->AddToArrayLNR(arr2, 0);
             Assert::IsTrue(arr2[0] == 1);
 
             Assert::IsTrue(t3->GetSize() == 0);
 
             int* arr4 = new int[t4->GetSize()];
-            t4->AddToArrayLNR(t4->GetRoot(), arr4, 0);
+            t4->AddToArrayLNR(arr4, 0);
             Assert::IsTrue(arr4[0] == 2);
             Assert::IsTrue(arr4[2] == 6);
             Assert::IsTrue(arr4[4] == 12);
@@ -126,41 +126,41 @@ namespace TreeTest
 
             // искомое значение
             int x = 5;
-            Assert::IsTrue(t1->Find(t1->GetRoot(), x) != nullptr);
+            Assert::IsTrue(t1->Find(x) != nullptr);
             x = 40;
-            Assert::IsTrue(t1->Find(t1->GetRoot(), x) != nullptr);
+            Assert::IsTrue(t1->Find(x) != nullptr);
             x = 7;
-            Assert::IsTrue(t1->Find(t1->GetRoot(), x) == nullptr);
+            Assert::IsTrue(t1->Find(x) == nullptr);
 
             x = 1;
-            Assert::IsTrue(t2->Find(t2->GetRoot(), x) != nullptr);
+            Assert::IsTrue(t2->Find(x) != nullptr);
             x = -2;
-            Assert::IsTrue(t2->Find(t2->GetRoot(), x) == nullptr);
+            Assert::IsTrue(t2->Find(x) == nullptr);
 
             
             x = 1;
-            Assert::IsTrue(t3->Find(t3->GetRoot(), x) == nullptr);
+            Assert::IsTrue(t3->Find(x) == nullptr);
 
             x = 2;
-            Assert::IsTrue(t4->Find(t4->GetRoot(), x) != nullptr);
+            Assert::IsTrue((t4->Find(x))->GetData() == 2);
             x = 15;
-            Assert::IsTrue(t4->Find(t4->GetRoot(), x) != nullptr);
+            Assert::IsTrue((t4->Find(x))->GetData() == 15);
             x = 6;
-            Assert::IsTrue(t4->Find(t4->GetRoot(), x) != nullptr);
+            Assert::IsTrue((t4->Find(x))->GetData() == 6);
             x = 116;
-            Assert::IsTrue(t4->Find(t4->GetRoot(), x) == nullptr);
+            Assert::IsTrue(t4->Find(x) == nullptr);
 
             x = 2;
-            Assert::IsTrue(t5->Find(t5->GetRoot(), x) != nullptr);
+            Assert::IsTrue((t5->Find(x))->GetData() == 2);
             x = 20;
-            Assert::IsTrue(t5->Find(t5->GetRoot(), x) != nullptr);
+            Assert::IsTrue((t5->Find(x))->GetData() == 20);
 
             x = 0;
-            Assert::IsTrue(t6->Find(t6->GetRoot(), x) != nullptr);
+            Assert::IsTrue((t6->Find(x))->GetData() == 0);
             x = 1;
-            Assert::IsTrue(t6->Find(t6->GetRoot(), x) != nullptr);
+            Assert::IsTrue((t6->Find(x))->GetData() == 1);
             x = 3;
-            Assert::IsTrue(t6->Find(t6->GetRoot(), x) == nullptr);
+            Assert::IsTrue(t6->Find(x) == nullptr);
         }
 
         TEST_METHOD(Test_Successor)
@@ -174,52 +174,66 @@ namespace TreeTest
             Generate(t1, t2, t3, t4, t5, t6);
 
             int y = 5;
-            Assert::IsTrue((t1->Successor(t1->GetRoot(), y))->GetData() == 10);
+            Assert::IsTrue((t1->Successor(y))->GetData() == 10);
             y = 30;
-            Assert::IsTrue((t1->Successor(t1->GetRoot(), y))->GetData() == 40);
+            Assert::IsTrue((t1->Successor(y))->GetData() == 40);
             y = 40;
-            Assert::IsTrue((t1->Successor(t1->GetRoot(), y)) == nullptr);
+            Assert::IsTrue((t1->Successor(y)) == nullptr);
             y = 999;
-            Assert::IsTrue((t1->Successor(t1->GetRoot(), y)) == nullptr);
+            Assert::IsTrue((t1->Successor(y)) == nullptr);
 
             y = 1;
-            Assert::IsTrue((t2->Successor(t2->GetRoot(), y)) == nullptr);
+            Assert::IsTrue((t2->Successor(y)) == nullptr);
 
             y = 5;
-            Assert::IsTrue((t3->Successor(t3->GetRoot(), y)) == nullptr);
+            Assert::IsTrue((t3->Successor(y)) == nullptr);
 
             y = 5;
-            Assert::IsTrue((t4->Successor(t4->GetRoot(), y))->GetData() == 6);
+            Assert::IsTrue((t4->Successor(y))->GetData() == 6);
             y = 6;
-            Assert::IsTrue((t4->Successor(t4->GetRoot(), y))->GetData() == 10);
+            Assert::IsTrue((t4->Successor(y))->GetData() == 10);
             y = 10;
-            Assert::IsTrue((t4->Successor(t4->GetRoot(), y))->GetData() == 12);
+            Assert::IsTrue((t4->Successor(y))->GetData() == 12);
             y = 12;
-            Assert::IsTrue((t4->Successor(t4->GetRoot(), y))->GetData() == 15);
+            Assert::IsTrue((t4->Successor(y))->GetData() == 15);
 
             y = 5;
-            Assert::IsTrue((t5->Successor(t5->GetRoot(), y))->GetData() == 10);
+            Assert::IsTrue((t5->Successor(y))->GetData() == 10);
             y = 10;
-            Assert::IsTrue((t5->Successor(t5->GetRoot(), y))->GetData() == 15);
+            Assert::IsTrue((t5->Successor(y))->GetData() == 15);
 
         }
 
+        //TEST_METHOD(Test_Height)
+        //{
+        //    BSTree <int>* t1 = new BSTree<int>();
+        //    BSTree <int>* t2 = new BSTree<int>();
+        //    BSTree <int>* t3 = new BSTree<int>();
+        //    BSTree <int>* t4 = new BSTree<int>();
+        //    BSTree <int>* t5 = new BSTree<int>();
+        //    BSTree <int>* t6 = new BSTree<int>();
+        //    Generate(t1, t2, t3, t4, t5, t6);
+
+        //    Assert::IsTrue(t1->Height(t1->GetRoot()) == 3);
+
+        //}
 
         TEST_METHOD(Test_Delete)
         {
-            BSTree <int>* A = new BSTree<int>();
-            A->Insert(50);
-            A->Insert(30);
-            A->Insert(5);
-            A->Insert(0);
-            A->Insert(-15);
-            A->Insert(-2);
-            A->Insert(45);
+            BSTree <int>* t1 = new BSTree<int>();
+            BSTree <int>* t2 = new BSTree<int>();
+            BSTree <int>* t3 = new BSTree<int>();
+            BSTree <int>* t4 = new BSTree<int>();
+            BSTree <int>* t5 = new BSTree<int>();
+            BSTree <int>* t6 = new BSTree<int>();
+            Generate(t1, t2, t3, t4, t5, t6);
 
-            int x = 0;
-            A->DeleteNode(A->GetRoot(), x);
+            int x = 5;
+            Assert::IsTrue(t1->Find(x) != nullptr);
+
+        /*    t1->DeleteNode(x);*/
             
-            Assert::IsTrue(A->Find(A->GetRoot(), x) == nullptr);
+            Assert::IsTrue(t1->Find(x) == nullptr);
         }
     };
 }
